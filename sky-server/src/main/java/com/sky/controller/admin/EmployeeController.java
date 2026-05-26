@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -22,6 +24,8 @@ import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 员工管理
@@ -86,6 +90,14 @@ public class EmployeeController {
         log.info("新增员工：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return Result.success();
+    }
+
+    @GetMapping("/page")
+    @ApiOperation("分页查询员工")
+    public Result<PageResult> pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info("分页查询员工：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
+        return Result.success(pageResult);
     }
 
 }
