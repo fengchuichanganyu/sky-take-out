@@ -5,3 +5,4 @@ bin/
 *.class
 *Test.java
 **/test/
+application-alioss.yml
