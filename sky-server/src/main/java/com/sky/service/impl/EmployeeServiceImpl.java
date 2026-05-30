@@ -1,7 +1,5 @@
 package com.sky.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,10 +94,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
 
         Page<Employee> page = (Page<Employee>) employeeMapper.pageQuery(employeePageQueryDTO);
-        long total = page.getTotal();
-        List<Employee> records = page.getResult();
 
-        return new PageResult(total, records);
+        return new PageResult(page.getTotal(), page.getResult());
     }
 
     /**
