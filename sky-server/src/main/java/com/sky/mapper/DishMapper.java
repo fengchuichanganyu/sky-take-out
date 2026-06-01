@@ -25,7 +25,13 @@ public interface DishMapper {
     @AutoFill(OperationType.INSERT)
     void insert(Dish dish);
 
+    @AutoFill(OperationType.UPDATE)
+    void update(Dish dish);
+
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    @Select("select * from dish where id = #{id}")
+    Dish getById(Long id);
 
     void deleteByIds(List<Long> ids);
 

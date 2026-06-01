@@ -1,27 +1,30 @@
 package com.sky.service.impl;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
-import com.sky.dto.DishDTO;
-import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
-import com.sky.mapper.DishFlavorMapper;
-import com.sky.mapper.DishMapper;
-import com.sky.mapper.SetmealMapper;
-import com.sky.constant.MessageConstant;
-import com.sky.constant.StatusConstant;
-import com.sky.exception.DeletionNotAllowedException;
-import com.sky.result.PageResult;
-import com.sky.service.DishService;
-import com.sky.vo.DishVO;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
+import com.sky.dto.DishDTO;
+import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
+import com.sky.entity.DishFlavor;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishFlavorMapper;
+import com.sky.mapper.DishMapper;
+import com.sky.mapper.SetmealMapper;
+import com.sky.result.PageResult;
+import com.sky.service.DishService;
+import com.sky.vo.DishVO;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -72,6 +75,36 @@ public class DishServiceImpl implements DishService {
         dishFlavorMapper.deleteByDishIds(ids);
         // 4. 批量删除菜品
         dishMapper.deleteByIds(ids);
+    }
+
+    public DishVO getByIdWithFlavor(Long id) {
+        // 1. 查菜品
+        Dish dish = dishMapper.getById(id);
+        // 2. 查口味
+        List<DishFlavor> flavors = dishFlavorMapper.getByDishId(id);
+        // 3. 组装 DishVO
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(flavors);
+        return dishVO;
+    }
+
+    @Transactional
+    public void updateWithFlavors(DishDTO dishDTO) {
+        // 1. 更新菜品基本信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.update(dish);
+        // 2. 删除旧口味
+        dishFlavorMapper.deleteByDishIds(Collections.singletonList(dish.getId()));
+
+        // 3. 插入新口味
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(flavor -> flavor.setDishId(dish.getId()));
+            dishFlavorMapper.insertBatch(flavors);
+        }
     }
 
 }
