@@ -111,4 +111,12 @@ public class DishServiceImpl implements DishService {
         return dishMapper.list(categoryId);
     }
 
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
+    }
+
 }

@@ -45,4 +45,10 @@ public interface DishMapper {
 
     List<Dish> getByIds(List<Long> ids);
 
+    /**
+     * 根据套餐id查询菜品（用于起售套餐前检查菜品是否在售）
+     */
+    @Select("select a.* from dish a left join setmeal_dish b on a.id = b.dish_id where b.setmeal_id = #{setmealId}")
+    List<Dish> getBySetmealId(Long setmealId);
+
 }

@@ -1,5 +1,6 @@
 package com.sky.mapper;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -38,9 +39,24 @@ public interface SetmealMapper {
     @AutoFill(OperationType.INSERT)
     void insert(Setmeal setmeal);
 
+    @AutoFill(OperationType.UPDATE)
+    void update(Setmeal setmeal);
+
     /**
      * 分页查询套餐（返回 Page 而非 List，Page 继承 ArrayList，额外携带 getTotal() 总条数）
      */
     Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 根据id查询套餐
+     */
+    @Select("select * from setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
+    /**
+     * 根据id删除套餐
+     */
+    @Delete("delete from setmeal where id = #{id}")
+    void deleteById(Long setmealId);
 
 }
