@@ -107,4 +107,8 @@ public class DishServiceImpl implements DishService {
         }
     }
 
+    public List<Dish> listByCategoryId(Long categoryId) {
+        return dishMapper.list(categoryId);
+    }
+
 }
